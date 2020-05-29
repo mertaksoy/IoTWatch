@@ -180,8 +180,8 @@
      * @private
      */
     function init() {
-    		bindClickEventsToBulbs();
 		updateBulbsStatus();
+		bindClickEventsToBulbs();
     		var capabilities = tizen.systeminfo.getCapabilities();
     		if (capabilities.wifi) {
     			tizen.systeminfo.addPropertyValueChangeListener("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
@@ -222,27 +222,44 @@
     
     /**
      * Binds click event on each bulb
+     * 
+     * Don't refactor this method. Selecting multiples nodes must look like this.
+     * https://docs.tizen.org/application/web/guides/w3c/ui/selector/
+     * 
      * @private
      */
     function bindClickEventsToBulbs() {
-    		document.querySelectorAll('.bulb').forEach( function(bulb, index) {
-    			bulb.addEventListener('click', function () {
-    				toggleBulb(index);
-    				bulb.querySelector('#bulb-off').style.display = bulbs[index].isOn ? 'none' : 'initial';
-    				bulb.querySelector('#bulb-on').style.display = bulbs[index].isOn ? 'initial' : 'none';
-    			});
-		});
+    		var bulbsContainer = document.querySelector('#bulbs');
+		var uiBulbs = bulbsContainer.querySelectorAll('.bulb');
+		var i = bulbs.length;
+		while (0 < i) {
+		    i--;
+		    uiBulbs[i].addEventListener('click', function (uiBulb) {
+		    		var index = uiBulb.currentTarget.getAttribute('index');
+				toggleBulb(index);
+				uiBulbs[index].querySelector('#bulb-off').style.display = bulbs[index].isOn ? 'none' : 'initial';
+				uiBulbs[index].querySelector('#bulb-on').style.display = bulbs[index].isOn ? 'initial' : 'none';
+			});
+		}
     }
     
     /**
      * Iterates over all bulbs and updates status on UI
+     * 
+     * Don't refactor this method. Selecting multiples nodes must look like this.
+     * https://docs.tizen.org/application/web/guides/w3c/ui/selector/
+     * 
      * @private
      */
     function updateBulbsStatus() {
-	    	document.querySelectorAll('.bulb').forEach( function(bulb, index) {
-	    		bulb.querySelector('#bulb-off').style.display = bulbs[index].isOn ? 'none' : 'initial';
-			bulb.querySelector('#bulb-on').style.display = bulbs[index].isOn ? 'initial' : 'none';
-		});
+    		var bulbsContainer = document.querySelector('#bulbs');
+    		var uiBulbs = bulbsContainer.querySelectorAll('.bulb');
+    		var i = bulbs.length;
+    		while (0 < i) {
+    		    i--;
+    		    uiBulbs[i].querySelector('#bulb-off').style.display = bulbs[i].isOn ? 'none' : 'initial';
+    		    uiBulbs[i].querySelector('#bulb-on').style.display = bulbs[i].isOn ? 'initial' : 'none';
+    		}
     }
     
     /**
