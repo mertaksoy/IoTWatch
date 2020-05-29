@@ -1,4 +1,5 @@
 (function() {
+	var bulbs = [{isOn: false}, {isOn: false}, {isOn: false}];
     var timerUpdateDate = 0,
         flagConsole = false,
         flagDigital = false,
@@ -179,6 +180,8 @@
      * @private
      */
     function init() {
+    		bindClickEventsToBulbs();
+		updateBulbsStatus();
     		var capabilities = tizen.systeminfo.getCapabilities();
     		if (capabilities.wifi) {
     			tizen.systeminfo.addPropertyValueChangeListener("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
@@ -196,7 +199,7 @@
      * @private
      */
     function onWIFINetworkSuccess(wifi) {
-    		if (wifi.status == 'ON') {
+    		if (wifi.status === 'ON') {
     			document.getElementById("str-wifi-status").style.display = 'none';
     			document.getElementById("bulbs").style.display = 'block';
     		} else {
@@ -211,11 +214,44 @@
      * WIFI system info error callback
      * @private
      */
-    function onWIFINetworkError(error) {
+    function onWIFINetworkError() {
     		document.getElementById("bulbs").style.display = 'none';
 		document.getElementById("str-wifi-status").style.display = 'block';
 		document.getElementById("str-wifi-status").innerHTML = 'No Internet';
 	}
+    
+    /**
+     * Binds click event on each bulb
+     * @private
+     */
+    function bindClickEventsToBulbs() {
+    		document.querySelectorAll('.bulb').forEach( function(bulb, index) {
+    			bulb.addEventListener('click', function () {
+    				toggleBulb(index);
+    				bulb.querySelector('#bulb-off').style.display = bulbs[index].isOn ? 'none' : 'initial';
+    				bulb.querySelector('#bulb-on').style.display = bulbs[index].isOn ? 'initial' : 'none';
+    			});
+		});
+    }
+    
+    /**
+     * Iterates over all bulbs and updates status on UI
+     * @private
+     */
+    function updateBulbsStatus() {
+	    	document.querySelectorAll('.bulb').forEach( function(bulb, index) {
+	    		bulb.querySelector('#bulb-off').style.display = bulbs[index].isOn ? 'none' : 'initial';
+			bulb.querySelector('#bulb-on').style.display = bulbs[index].isOn ? 'initial' : 'none';
+		});
+    }
+    
+    /**
+     * Toggles bulb status in 
+     * @public
+     */
+    function toggleBulb(bulbIndex) {
+    		bulbs[bulbIndex].isOn = !bulbs[bulbIndex].isOn;
+    }
 
     window.onload = init();
 }());

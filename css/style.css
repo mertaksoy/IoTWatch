@@ -73,3 +73,7 @@ body {
     white-space: nowrap;
 }
 
+#bulb-off, #bulb-on {
+	display: none;
+}
+
