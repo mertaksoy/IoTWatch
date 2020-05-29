@@ -203,7 +203,7 @@
      * @private
      */
     function onWIFINetworkError(error) {
-		// TODO: handle wifi error
+    		document.getElementById("str-wifi-status").innerHTML = 'OFF';
 	}
 
     window.onload = init();
