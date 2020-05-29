@@ -181,6 +181,7 @@
     function init() {
     		var capabilities = tizen.systeminfo.getCapabilities();
     		if (capabilities.wifi) {
+    			tizen.systeminfo.addPropertyValueChangeListener("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
     			tizen.systeminfo.getPropertyValue("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
     		}
 	    	
