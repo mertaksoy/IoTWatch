@@ -196,7 +196,15 @@
      * @private
      */
     function onWIFINetworkSuccess(wifi) {
-    		document.getElementById("str-wifi-status").innerHTML = wifi.status;
+    		if (wifi.status == 'ON') {
+    			document.getElementById("str-wifi-status").style.display = 'none';
+    			document.getElementById("bulbs").style.display = 'block';
+    		} else {
+    			document.getElementById("bulbs").style.display = 'none';
+    			document.getElementById("str-wifi-status").style.display = 'block';
+    			document.getElementById("str-wifi-status").innerHTML = 'No Internet';
+    		}
+    		
     }
     
     /**
@@ -204,7 +212,9 @@
      * @private
      */
     function onWIFINetworkError(error) {
-    		document.getElementById("str-wifi-status").innerHTML = 'OFF';
+    		document.getElementById("bulbs").style.display = 'none';
+		document.getElementById("str-wifi-status").style.display = 'block';
+		document.getElementById("str-wifi-status").innerHTML = 'No Internet';
 	}
 
     window.onload = init();

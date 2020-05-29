@@ -25,7 +25,7 @@ body {
     color: white;
     width: 100%;
     position: absolute;
-    top: calc(50% - 89px);
+    top: calc(50% - 80px);
    	text-align: center;
 }
 
@@ -49,5 +49,27 @@ body {
     position: absolute;
     top: 0;
     text-align: center;
+    padding-top: 30px;
+}
+
+#str-wifi-status {
+	display: none;
+}
+
+.bulb {
+	width: calc(80% / 3);
+	float: left;
+}
+
+.bulb:first-child {
+	margin-left: 10%;
+}
+
+.bulb p {
+	margin: 0;
+    font-size: 20px;
+	text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
