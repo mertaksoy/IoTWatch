@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2015 Samsung Electronics Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 (function() {
     var timerUpdateDate = 0,
         flagConsole = false,
@@ -97,18 +81,14 @@
         if (minute < 10) {
             strMinutes.innerHTML = "0" + minute;
         }
-
-        // Each 0.5 second the visibility of flagConsole is changed.
-        if(flagDigital) {
-            if (flagConsole) {
-                strConsole.style.visibility = "visible";
-                flagConsole = false;
-            } else {
-                strConsole.style.visibility = "hidden";
-                flagConsole = true;
-            }
+        if (hour < 10) {
+        		strHours.innerHTML = "0" + hour;
         }
-        else {
+
+        if (flagDigital) {
+            strConsole.style.visibility = flagConsole ? "visible" : "hidden";
+            flagConsole = !flagConsole;
+        } else {
             strConsole.style.visibility = "visible";
             flagConsole = false;
         }
@@ -130,7 +110,6 @@
     function ambientDigitalWatch() {
         flagDigital = false;
         clearInterval(interval);
-        document.getElementById("digital-body").style.backgroundImage = "none";
         updateTime();
     }
 
@@ -140,9 +119,8 @@
      * @private
      */
     function getBatteryState() {
-    		var batteryFill = document.getElementById("str-battery-status");
 		var batteryLevel = Math.floor(battery.level * 100);
-    		batteryFill.innerHTML = batteryLevel + "%";
+		document.getElementById("str-battery-status").innerHTML = batteryLevel + "%";
     }
 
     /**
@@ -201,11 +179,32 @@
      * @private
      */
     function init() {
+    		var capabilities = tizen.systeminfo.getCapabilities();
+    		if (capabilities.wifi) {
+    			tizen.systeminfo.getPropertyValue("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
+    		}
+	    	
         initDigitalWatch();
         updateDate(0);
 
         bindEvents();
     }
+    
+    /**
+     * WIFI system info success callback
+     * @private
+     */
+    function onWIFINetworkSuccess(wifi) {
+    		document.getElementById("str-wifi-status").innerHTML = wifi.status;
+    }
+    
+    /**
+     * WIFI system info error callback
+     * @private
+     */
+    function onWIFINetworkError(error) {
+		// TODO: handle wifi error
+	}
 
     window.onload = init();
 }());

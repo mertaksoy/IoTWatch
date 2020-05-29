@@ -33,7 +33,7 @@ body {
 	font-size: 140px !important;
 }
 
-#info {
+#footer-info {
     color: white;
     font-size: 200%;
     width: 100%;
@@ -42,4 +42,12 @@ body {
     text-align: center;
 }
 
+#header-info {
+	color: white;
+    font-size: 200%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    text-align: center;
+}
 
