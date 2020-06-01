@@ -1,5 +1,6 @@
 (function() {
 	var bulbs = [{isOn: false}, {isOn: false}, {isOn: false}];
+	var groups;
     var timerUpdateDate = 0,
         flagConsole = false,
         flagDigital = false,
@@ -165,6 +166,7 @@
         document.addEventListener("visibilitychange", function() {
             if (!document.hidden) {
                 updateWatch();
+                getBulbsInfo();
             }
         });
 
@@ -180,13 +182,9 @@
      * @private
      */
     function init() {
-		updateBulbsStatus();
 		bindClickEventsToBulbs();
-    		var capabilities = tizen.systeminfo.getCapabilities();
-    		if (capabilities.wifi) {
-    			tizen.systeminfo.addPropertyValueChangeListener("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
-    			tizen.systeminfo.getPropertyValue("WIFI_NETWORK", onWIFINetworkSuccess, onWIFINetworkError);
-    		}
+		getBulbsInfo();
+		updateBulbsStatus();
 	    	
         initDigitalWatch();
         updateDate(0);
@@ -194,31 +192,14 @@
         bindEvents();
     }
     
-    /**
-     * WIFI system info success callback
-     * @private
-     */
-    function onWIFINetworkSuccess(wifi) {
-    		if (wifi.status === 'ON') {
-    			document.getElementById("str-wifi-status").style.display = 'none';
-    			document.getElementById("bulbs").style.display = 'block';
-    		} else {
-    			document.getElementById("bulbs").style.display = 'none';
-    			document.getElementById("str-wifi-status").style.display = 'block';
-    			document.getElementById("str-wifi-status").innerHTML = 'No Internet';
-    		}
-    		
+    function getBulbsInfo() {
+    		var client = new XMLHttpRequest();
+		client.onerror = onerrorhandler;
+		client.onreadystatechange = onGetGroupsSuccess;
+		client.open("GET", "http://192.168.0.80:4000/groups", false);
+		client.send();
     }
     
-    /**
-     * WIFI system info error callback
-     * @private
-     */
-    function onWIFINetworkError() {
-    		document.getElementById("bulbs").style.display = 'none';
-		document.getElementById("str-wifi-status").style.display = 'block';
-		document.getElementById("str-wifi-status").innerHTML = 'No Internet';
-	}
     
     /**
      * Binds click event on each bulb
@@ -236,11 +217,24 @@
 		    i--;
 		    uiBulbs[i].addEventListener('click', function (uiBulb) {
 		    		var index = uiBulb.currentTarget.getAttribute('index');
-				toggleBulb(index);
-				uiBulbs[index].querySelector('#bulb-off').style.display = bulbs[index].isOn ? 'none' : 'initial';
-				uiBulbs[index].querySelector('#bulb-on').style.display = bulbs[index].isOn ? 'initial' : 'none';
+		    		var groupId = Object.keys(groups)[index];
+		    		toggleGroup(groupId);
 			});
 		}
+    }
+    
+    function toggleGroup(groupId) {
+		var client = new XMLHttpRequest();
+		client.onerror = onerrorhandler;
+		client.onreadystatechange = onToggleSuccess
+		client.open("POST", "http://192.168.0.80:4000/groups/" + groupId + "/toggle", false);
+		client.send();
+	}
+    
+    function onToggleSuccess() {
+    		setTimeout(function() {
+    			getBulbsInfo();
+        }, 500);
     }
     
     /**
@@ -257,17 +251,28 @@
     		var i = bulbs.length;
     		while (0 < i) {
     		    i--;
-    		    uiBulbs[i].querySelector('#bulb-off').style.display = bulbs[i].isOn ? 'none' : 'initial';
-    		    uiBulbs[i].querySelector('#bulb-on').style.display = bulbs[i].isOn ? 'initial' : 'none';
+    		    uiBulbs[i].querySelector('#bulb-off').style.display = bulbs[i].onOff ? 'none' : 'initial';
+    		    uiBulbs[i].querySelector('#bulb-on').style.display = bulbs[i].onOff ? 'initial' : 'none';
+    		    uiBulbs[i].querySelector('#bulb-name').innerHTML = bulbs[i].name;
     		}
     }
     
-    /**
-     * Toggles bulb status in 
-     * @public
-     */
-    function toggleBulb(bulbIndex) {
-    		bulbs[bulbIndex].isOn = !bulbs[bulbIndex].isOn;
+    function onerrorhandler(e) {
+    		// TODO: Error handling
+    }   
+
+    function onGetGroupsSuccess() {
+      if(this.readyState == this.DONE) {
+        if(this.status == 200) {
+        		groups = JSON.parse(this.responseText);
+        		var keys = Object.keys(groups);
+        		bulbs = [];
+        		keys.forEach( function(key) {
+        			bulbs.push(groups[key].group);
+    			});
+        		updateBulbsStatus();
+        }
+      }
     }
 
     window.onload = init();
