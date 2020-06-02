@@ -218,28 +218,23 @@
 		    uiBulbs[i].addEventListener('click', function (uiBulb) {
 		    		var index = uiBulb.currentTarget.getAttribute('index');
 		    		var groupId = Object.keys(groups)[index];
-		    		toggleGroup(groupId);
+		    		toggleGroup(groupId, index);
 			});
 		}
     }
     
-    function toggleGroup(groupId) {
+    function toggleGroup(groupId, index) {
 		var client = new XMLHttpRequest();
 		client.onerror = onerrorhandler;
-		client.onreadystatechange = onToggleSuccess
+		client.onloadend = function () {
+			if(this.readyState == this.DONE && this.status == 200 && JSON.parse(this.responseText).toggled) {
+				bulbs[index].onOff = !bulbs[index].onOff
+				updateBulbsStatus();
+			}
+		};
 		client.open("POST", "http://192.168.0.80:4000/groups/" + groupId + "/toggle", false);
 		client.send();
 	}
-    
-    function onToggleSuccess() {
-	    	if(this.readyState == this.DONE && this.status == 200) {
-	    		if (JSON.parse(this.responseText).toggled) {
-	    			setTimeout(function() {
-	    				getBulbsInfo();
-				}, 500);
-	    		}
-	    	}
-    }
     
     /**
      * Iterates over all bulbs and updates status on UI
