@@ -232,9 +232,13 @@
 	}
     
     function onToggleSuccess() {
-    		setTimeout(function() {
-    			getBulbsInfo();
-        }, 500);
+	    	if(this.readyState == this.DONE && this.status == 200) {
+	    		if (JSON.parse(this.responseText).toggled) {
+	    			setTimeout(function() {
+	    				getBulbsInfo();
+				}, 500);
+	    		}
+	    	}
     }
     
     /**
