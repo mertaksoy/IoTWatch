@@ -258,7 +258,6 @@
     }
     
     function onerrorhandler(e) {
-    		// TODO: Error handling
     }   
 
     function onGetGroupsSuccess() {

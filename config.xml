@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="https://www.codesquare.at/IoTWatch" version="1.0.0" viewmodes="maximized">
-    <access origin="*" subdomains="true"></access>
-    <tizen:application id="S5YHzZMbVF.MyDigitalWatch" package="S5YHzZMbVF" required_version="2.3.1" ambient_support="enable"/>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://www.codesquare.at/IoTWatch" version="1.0.0" viewmodes="maximized">
+    <access origin="*" subdomains="true"/>
+    <tizen:application id="S5YHzZMbVF.MyDigitalWatch" package="S5YHzZMbVF" required_version="2.3.2" ambient_support="enable"/>
     <author href="https://www.codesquare.at" email="mert.aksoy@codesquare.at">Mert Aksoy</author>
     <tizen:category name="http://tizen.org/category/wearable_clock"/>
     <content src="index.html"/>
